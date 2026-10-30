@@ -1,13 +1,19 @@
 import random as r
 
 class Character:
-    def __init__(self, name, damage, health):
+    def __init__(self, name, damage, health, armor=10):
         self.name = name
         self.damage = damage
         self.health = health
+        self.armor = armor
 
     def be_attacked(self, enemy_damage):
-        self.health -= enemy_damage
+        self.health -= int(enemy_damage - self.armor)
+        if self.armor > 0:
+            self.armor -= int(enemy_damage/2)
+
+        if self.armor <= 0:
+            self.armor = 0
 
 class User(Character):
     def __init__(self, name, damage, health):
@@ -23,6 +29,8 @@ class User(Character):
             print("Невозможно востановиться")
 
 
+
+
 enemy1 = Character(name="Джон", damage=10, health=100)
 enemy2 = Character(name="Мединский", damage=100, health=10)
 enemy3 = Character(name="Путин", damage=30, health=999)
@@ -33,8 +41,9 @@ enemies = [enemy1, enemy2, enemy3]
 enemy = r.choice(enemies)
 print(f"Ваш противник {enemy.name}")
 while True:
-    print(f"(за) Ваше здоровье {user.health}, ваша сила атака {user.damage}")
-    print(f"Здоровье противника {enemy.health}, атакама противоти {enemy.damage}")
+    print(f"(за) Ваше здоровье {user.health}, ваша сила атака {user.damage}\nЦелостность вашей брони {user.armor}")
+    print(f"Здоровье противника {enemy.health}, атакама противоти {enemy.damage}\nЦелостность противоти бронька {enemy.armor}")
+
 
     user_input = input("\nЕсли ты не хочешь откинуться напиши 1\nЕсли ты хочешь убить его напиши 2\nВаш ответ: ")
     if user_input == "1":
@@ -43,7 +52,10 @@ while True:
         enemy.be_attacked(user.damage)
         user.be_attacked(enemy.damage)
         print(f"Тебя побили на {enemy.damage}")
-        if user.health <= 0:
+        if user.health <= 0 and enemy.health <= 0:
+            print("Ничья")
+            break
+        elif user.health <= 0:
             print(f"Победил {enemy.name}!")
             break
         elif enemy.health <= 0:
